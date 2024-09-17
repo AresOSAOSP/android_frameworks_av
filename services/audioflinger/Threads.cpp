@@ -4055,7 +4055,13 @@ NO_THREAD_SAFETY_ANALYSIS  // manual locking of AudioFlinger
     // FIXME could this be made local to while loop?
     writeFrames = 0;
 
-    cacheParameters_l();
+    {
+        audio_utils::lock_guard l(mutex());
+
+        cacheParameters_l();
+        checkSilentMode_l();
+    }
+
     mSleepTimeUs = mIdleSleepTimeUs;
 
     if (mType == MIXER || mType == SPATIALIZER) {
@@ -4079,8 +4085,6 @@ NO_THREAD_SAFETY_ANALYSIS  // manual locking of AudioFlinger
     // Estimated time for next buffer to be written to hal. This is used only on
     // suspended mode (for now) to help schedule the wait time until next iteration.
     nsecs_t timeLoopNextNs = 0;
-
-    checkSilentMode_l();
 
     audio_patch_handle_t lastDownstreamPatchHandle = AUDIO_PATCH_HANDLE_NONE;
 
