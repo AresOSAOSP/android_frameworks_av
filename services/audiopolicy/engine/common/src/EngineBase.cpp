@@ -302,6 +302,9 @@ StrategyVector EngineBase::getOrderedProductStrategies() const
     }
     StrategyVector orderedStrategies;
     for (const auto &iter : strategies) {
+        if (iter.second->isPatchStrategy()) {
+            continue;
+        }
         orderedStrategies.push_back(iter.second->getId());
     }
     return orderedStrategies;
@@ -733,6 +736,9 @@ void EngineBase::initializeDeviceSelectionCache() {
     auto defaultDevices = DeviceVector(getApmObserver()->getDefaultOutputDevice());
     for (const auto &iter : getProductStrategies()) {
         const auto &strategy = iter.second;
+        if (strategy->isPatchStrategy()) {
+            continue;
+        }
         mDevicesForStrategies[strategy->getId()] = defaultDevices;
         setStrategyDevices(strategy, defaultDevices);
     }
@@ -741,6 +747,9 @@ void EngineBase::initializeDeviceSelectionCache() {
 void EngineBase::updateDeviceSelectionCache() {
     for (const auto &iter : getProductStrategies()) {
         const auto& strategy = iter.second;
+        if (strategy->isPatchStrategy()) {
+            continue;
+        }
         auto devices = getDevicesForProductStrategy(strategy->getId());
         mDevicesForStrategies[strategy->getId()] = devices;
         setStrategyDevices(strategy, devices);
