@@ -5936,9 +5936,9 @@ void MediaCodec::extractCSD(const sp<AMessage> &format) {
         }
         if (csd->size() == 0) {
             ALOGW("csd-%zu size is 0", i);
+        } else {
+            mCSD.push_back(csd);
         }
-
-        mCSD.push_back(csd);
         ++i;
     }
 
